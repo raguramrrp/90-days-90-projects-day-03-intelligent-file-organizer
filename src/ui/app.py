@@ -1813,15 +1813,16 @@ class FileOrganizerApp(tk.Tk):
                 source_dir=src,
                 target_dir=tgt,
                 date_mode=date_mode,
-                hierarchy_style=hierarchy,
+                hierarchy=hierarchy,
                 conflict_strategy=conflict,
                 duplicate_strategy=dup_strategy,
                 recursive=recursive,
                 include_hidden=include_hidden,
             )
-            self.after(0, lambda: self._on_scan_complete(plan))
+            self.after(0, lambda p=plan: self._on_scan_complete(p))
         except Exception as e:
-            self.after(0, lambda: self._on_scan_error(str(e)))
+            err_str = str(e)
+            self.after(0, lambda msg=err_str: self._on_scan_error(msg))
 
     def _on_scan_complete(self, plan: OrganizationPlan) -> None:
         self.progress_bar.stop()
@@ -1832,8 +1833,9 @@ class FileOrganizerApp(tk.Tk):
         self._update_telemetry_metrics()
         self.btn_execute.set_enabled(len(plan.actions) > 0)
 
-        n_moves = sum(1 for a in plan.actions if a.action_type != ActionType.SKIP)
-        msg = f"Discovered {len(plan.scanned_files)} files: {n_moves} scheduled to move, {len(plan.duplicates)} duplicates identified."
+        n_moves = plan.files_to_move
+        n_dups = plan.duplicate_report.total_duplicates
+        msg = f"Discovered {plan.total_files} files: {n_moves} scheduled to move, {n_dups} duplicates identified."
         self.set_status(msg)
 
     def _on_scan_error(self, err_msg: str) -> None:
@@ -1853,9 +1855,9 @@ class FileOrganizerApp(tk.Tk):
         filter_text = self._filter_var.get().lower().strip()
 
         for idx, action in enumerate(plan.actions):
-            src_name = action.source_path.name
-            tgt_rel = str(action.destination_path.relative_to(action.destination_path.parents[1])) if len(action.destination_path.parts) > 2 else action.destination_path.name
-            cat_name = action.rule_name or action.category
+            src_name = action.source_name
+            tgt_rel = str(action.relative_dest)
+            cat_name = action.matched_rule or action.category
 
             # Search filter check
             if filter_text:
@@ -1867,15 +1869,15 @@ class FileOrganizerApp(tk.Tk):
 
             inc_txt = "[✓]" if action.included else "[ ]"
             dup_txt = "CLONE (SHA-256)" if action.is_duplicate else "-"
-            sz_txt = format_bytes(action.size_bytes)
+            sz_txt = action.size_readable
             act_txt = action.action_type.value.upper()
 
             tags = ["even" if idx % 2 == 0 else "odd"]
             if action.is_duplicate:
                 tags.append("duplicate")
-            if action.is_collision:
+            if action.original_target_exists:
                 tags.append("collision")
-            if action.rule_name:
+            if action.matched_rule:
                 tags.append("rule_match")
 
             self.tree_preview.insert(
@@ -1953,9 +1955,10 @@ class FileOrganizerApp(tk.Tk):
     def _run_execute_worker(self) -> None:
         try:
             res = self.engine.execute_plan(self.current_plan)
-            self.after(0, lambda: self._on_execute_complete(res))
+            self.after(0, lambda r=res: self._on_execute_complete(r))
         except Exception as e:
-            self.after(0, lambda: self._on_execute_error(str(e)))
+            err_str = str(e)
+            self.after(0, lambda msg=err_str: self._on_execute_error(msg))
 
     def _on_execute_complete(self, result: ExecutionResult) -> None:
         self.progress_bar.stop()
@@ -1964,14 +1967,12 @@ class FileOrganizerApp(tk.Tk):
         self.refresh_history_list()
         self._update_telemetry_metrics()
 
-        msg = f"Organization Complete!\n\nSuccessfully moved: {result.files_moved} files\nFailures: {result.files_failed}"
-        if result.duplicates_handled > 0:
-            msg += f"\nDuplicates handled: {result.duplicates_handled}"
+        msg = f"Organization Complete!\n\nSuccessfully moved: {result.moved_count} files\nFailures: {result.failed_count}"
         if result.errors:
             msg += f"\n\nFirst error encountered:\n{result.errors[0]}"
 
         messagebox.showinfo("Success", msg)
-        self.set_status(f"Batch #{result.batch_id} completed: {result.files_moved} files organized.")
+        self.set_status(f"Batch {result.batch_id} completed: {result.moved_count} files organized.")
 
         # Re-scan folder to show clean workspace
         self._on_scan_clicked()
@@ -2018,19 +2019,20 @@ class FileOrganizerApp(tk.Tk):
     def _run_rollback_worker(self, batch_id: str) -> None:
         try:
             res = self.engine.rollback_batch(batch_id)
-            self.after(0, lambda: self._on_rollback_complete(batch_id, res))
+            self.after(0, lambda b=batch_id, r=res: self._on_rollback_complete(b, r))
         except Exception as e:
-            self.after(0, lambda: self._on_rollback_error(str(e)))
+            err_str = str(e)
+            self.after(0, lambda msg=err_str: self._on_rollback_error(msg))
 
-    def _on_rollback_complete(self, batch_id: int, result: ExecutionResult) -> None:
+    def _on_rollback_complete(self, batch_id: str, result: Any) -> None:
         self.progress_bar.stop()
         self.progress_bar.config(mode="determinate", value=0)
         self.refresh_history_list()
         self._update_telemetry_metrics()
 
-        msg = f"Rollback Complete for Batch #{batch_id}!\n\nFiles successfully restored: {result.files_moved}\nFailures: {result.files_failed}"
+        msg = f"Rollback Complete for Batch {batch_id}!\n\nFiles successfully restored: {result.restored_count}\nFailures: {result.failed_count}"
         messagebox.showinfo("Rollback Complete", msg)
-        self.set_status(f"Batch #{batch_id} successfully reversed.")
+        self.set_status(f"Batch {batch_id} successfully reversed.")
 
     def _on_rollback_error(self, err_msg: str) -> None:
         self.progress_bar.stop()
@@ -2201,10 +2203,10 @@ class FileOrganizerApp(tk.Tk):
 
         # Update KPI Cards
         if self.current_plan:
-            discovered_count = len(self.current_plan.scanned_files)
-            scheduled_count = sum(1 for a in self.current_plan.actions if a.included and a.action_type != ActionType.SKIP)
-            dup_count = len(self.current_plan.duplicates)
-            wasted_bytes = sum(d.file_metadata.size_bytes for d in self.current_plan.duplicates)
+            discovered_count = self.current_plan.total_files
+            scheduled_count = self.current_plan.files_to_move
+            dup_count = self.current_plan.duplicate_report.total_duplicates
+            wasted_bytes = self.current_plan.duplicate_report.total_wasted_bytes
             wasted_str = format_bytes(wasted_bytes)
 
             self.kpi_dash_scanned["value"].config(text=str(discovered_count))
@@ -2218,11 +2220,7 @@ class FileOrganizerApp(tk.Tk):
             self.kpi_prev_wasted["value"].config(text=wasted_str)
 
             # Update Analytics Donut Chart
-            cat_counts: Dict[str, int] = {}
-            for a in self.current_plan.actions:
-                c = a.category or "Other"
-                cat_counts[c] = cat_counts.get(c, 0) + 1
-            self.dash_analytics_canvas.draw_chart(cat_counts)
+            self.dash_analytics_canvas.draw_chart(self.current_plan.category_distribution)
         else:
             self.kpi_dash_scanned["value"].config(text="0")
             self.kpi_dash_organized["value"].config(text=str(organized_count))

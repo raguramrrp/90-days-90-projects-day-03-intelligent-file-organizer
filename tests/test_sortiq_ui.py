@@ -14,6 +14,15 @@ from src.ui.app import (
 )
 
 
+@pytest.fixture(autouse=True)
+def mock_messagebox(monkeypatch):
+    """Automatically mock all modal dialogs to avoid hanging in tests."""
+    monkeypatch.setattr("tkinter.messagebox.showinfo", lambda *a, **k: None)
+    monkeypatch.setattr("tkinter.messagebox.showerror", lambda *a, **k: None)
+    monkeypatch.setattr("tkinter.messagebox.showwarning", lambda *a, **k: None)
+    monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *a, **k: True)
+
+
 @pytest.fixture
 def app():
     """Create and tear down the FileOrganizerApp headlessly."""
@@ -101,3 +110,25 @@ def test_preview_table_filter(app):
     app._apply_preview_filter()
     app._filter_var.set("")
     app._apply_preview_filter()
+
+
+def test_plan_population_and_telemetry(app, tmp_path):
+    """Verify that build_plan results populate preview table and KPI telemetry without errors."""
+    sample_file = tmp_path / "invoice_test.pdf"
+    sample_file.write_text("sample content")
+
+    plan = app.engine.build_plan(source_dir=tmp_path, target_dir=tmp_path)
+    app._on_scan_complete(plan)
+
+    assert app.current_plan is not None
+    assert int(app.kpi_dash_scanned["value"].cget("text")) >= 1
+    assert len(app.tree_preview.get_children()) >= 1
+
+
+def test_rollback_complete_handler(app):
+    """Verify that _on_rollback_complete runs cleanly with RollbackResult."""
+    from src.engine import RollbackResult
+    fake_result = RollbackResult(batch_id="batch-test", restored_count=5, failed_count=0)
+    app._on_rollback_complete("batch-test", fake_result)
+    assert "batch-test" in app.lbl_status.cget("text")
+
