@@ -1,84 +1,78 @@
-# Application UI Screenshots & Visual Guide
+# SortIQ — Smart File Intelligence
+## UI Screenshots & Visual Guide
 
-This directory holds visual demonstration screenshots of the **Context-Aware Desktop File Organization Automation** system.
-
----
-
-## 📷 Capturing Screenshots on Windows
-
-When running on an interactive Windows desktop session, execute the automated screenshot script:
-
-```bash
-# Ensure virtual environment is active
-.\.venv\Scripts\python scripts\capture_screenshots.py
-```
-
-This will launch the application, load the synthetic test dataset, cycle through all four workflow tabs, and automatically save high-resolution screenshots into this directory:
-
-1. `01_folder_selection_and_options.png` — Folder selection, Downloads preset, date grouping, hierarchy layout, and conflict rules.
-2. `02_rule_engine_manager.png` — Priority rule engine table, condition builder, add/edit/toggle rules.
-3. `03_plan_preview_and_duplicates.png` — Dry-run simulation table with source-to-target paths, rule tags, duplicate flags, and one-click execution.
-4. `04_history_and_undo_audit.png` — Complete SQLite audit history log with one-click batch rollback and CSV/JSON export.
+This directory holds visual demonstration assets and layout documentation for **SortIQ — Smart File Intelligence** (Context-Aware Desktop File Organization Automation system).
 
 ---
 
-## 🖥️ Screen Layout & Workflow Mockups
+## 🎨 Design Concept Rendering
 
-### Screen 1: Folder Selection & Strategy Configuration (Tab 1)
+![SortIQ Desktop UI Concept](sortiq_design_concept.jpg)
+
+The redesigned interface features:
+- **Obsidian Dark Canvas (`#101014`)** with elevated card surfaces (`#1B1B26`) and electric violet accents (`#8B5CF6`).
+- **Vertical Command Sidebar** navigating between Dashboard, Organize Files, Rule Engine, Plan Simulation, History & Undo, and Settings.
+- **4 Telemetry Metric Cards** (Files Scanned, Files Organized, Duplicates Found, Space Reclaimed).
+- **Native Vector Donut Chart** displaying category distributions dynamically calculated from scanned files.
+- **Transaction Audit Matrix** supporting one-click rollback of any historical batch.
+
+---
+
+## 🖥️ Screen Layout & Workflow Mockup
+
+### Main Dashboard & Workspace
 ```
-+--------------------------------------------------------------------------------------------------+
-| 📂 Context-Aware Desktop File Organizer  [⚡ AUTOMATION ENGINE]  [📊 Total: 41 | Batches: 1] [🌙/☀️] |
-+--------------------------------------------------------------------------------------------------+
-| [ 📁 1. Folder & Options ] [ ⚙️ 2. Rule Engine ] [ 👁️ 3. Preview & Organize ] [ 📜 4. History & Undo ]|
-|--------------------------------------------------------------------------------------------------|
-| Quick Presets: [ 📥 Downloads Folder ]  [ 🖥️ Desktop Folder ]  [ 🧪 Sample Clutter Test ]          |
-|                                                                                                  |
-| 📁 Folder Locations                                                                              |
-| Source Folder:      [ D:\Downloads\Messy_Folder                                ] [Browse]        |
-| Destination Folder: [ D:\Downloads\Messy_Folder                                ] [Browse] [Same] |
-|                                                                                                  |
-| ⚙️ Organization Strategies & Conflict Rules                                                      |
-| Date Sub-folders:    [ None / Year / Year-Month / Full-Date ]   Layout:    [ Category / Date ]  |
-| Filename Collisions: [ Auto-Rename (1) / Skip / Overwrite   ]   Duplicates:[ Report / Quarantine] |
-| [x] Recursive Scan (traverse subfolders)     [ ] Include Hidden Files                            |
-|                                                                                                  |
-| [ ⚡ Scan Folder & Generate Organization Preview ]    [ 📂 Open Source in Explorer ]             |
-+--------------------------------------------------------------------------------------------------+
++----------------------------------------------------------------------------------------------------------+
+| ⬢ SortIQ  [SMART FILE INTELLIGENCE]                        ● Status: Optimal / SQLite Active             |
++----------------------------------------------------------------------------------------------------------+
+|  [SIDEBAR]            |  [DASHBOARD WORKSPACE]                                                           |
+|  NAVIGATION           |  SortIQ Workspace                                                                |
+|  ▌ 📊 Dashboard       |  Context-Aware Local File Sorting • Cryptographic SHA-256 Deduplication           |
+|    📁 Organize Files  |                                                                                  |
+|    ⚙️ Rule Engine      |  [ 📁 SCANNED: 41 ]  [ 🚀 ORGANIZED: 41 ]  [ ⚠️ DUPLICATES: 6 ]  [ 💾 RECLAIMED: 317 B ]|
+|    🚀 Plan Simulation |                                                                                  |
+|    📜 History & Undo  |  QUICK FOLDER SORTING                     |  FILE ANALYTICS                      |
+|    ⚙️ Settings         |  Source: [ D:\Downloads\Sample_Clutter ]  |  [ Donut Chart: Documents 38%        |
+|                       |  Presets: [Downloads] [Desktop] [Clutter] |                 Images 25%, Code 18% |
+|  SYSTEM METRICS       |  [ 🚀 Scan & Preview Plan ] [Configure]   |                 Media 12%, Other 7% ]|
+|  Organized: 41 files  |                                                                                  |
+|  Batches: 1           |  RECENT BATCH ACTIVITY                                                           |
+|                       |  #batch-20261019-211421  | D:\Downloads  | 41 files | COMPLETED                  |
++----------------------------------------------------------------------------------------------------------+
+| Ready.                                                                           [ Progressbar ]         |
++----------------------------------------------------------------------------------------------------------+
 ```
 
 ### Screen 2: Custom Rule Engine (Tab 2)
 ```
 +--------------------------------------------------------------------------------------------------+
-| Priority Categorization Rules (Evaluated in Ascending Order):                                    |
+| Active Categorization Rules (Evaluated in Ascending Priority Order):                              |
 |--------------------------------------------------------------------------------------------------|
 | Priority | Rule Name                  | Target Subfolder       | Pattern       | Status          |
 |----------|----------------------------|------------------------|---------------|-----------------|
-|   P-10   | Screenshots                | Screenshots            | *screenshot*  | Active ✓        |
-|   P-20   | Invoices & Financial Rec.  | Finances/Invoices      | *invoice*     | Active ✓        |
-|   P-25   | Receipts                   | Finances/Receipts      | *receipt*     | Active ✓        |
-|   P-30   | Resumes & CVs              | Career/Resumes         | *resume*      | Active ✓        |
-|   P-40   | Large Media Files (>100MB) | Large_Files            | > 100 MB      | Active ✓        |
-|   P-50   | Software Installers & ISOs | Software_Installers    | .exe,.msi,.iso| Active ✓        |
+|    10    | Screenshots                | Screenshots            | *screenshot*  | Active ✓        |
+|    20    | Invoices & Financial Rec.  | Finances/Invoices      | *invoice*     | Active ✓        |
+|    25    | Receipts                   | Finances/Receipts      | *receipt*     | Active ✓        |
+|    30    | Resumes & CVs              | Career/Resumes         | *resume*      | Active ✓        |
+|    40    | Large Media Files (>100MB) | Large_Files            | > 100 MB      | Active ✓        |
+|    50    | Software Installers & ISOs | Software_Installers    | .exe,.msi,.iso| Active ✓        |
 |                                                                                                  |
-|  [ ➕ Add Rule ]   [ ✏️ Edit Selected ]   [ 🗑️ Delete Selected ]   [ 🔄 Toggle ]   [ ↺ Reset ]   |
+|  [ ➕ Add Rule ]   [ ✏️ Edit Selected ]   [ 🗑️ Delete ]   [ 🔄 Toggle Status ]   [ ↺ Reset ]      |
 +--------------------------------------------------------------------------------------------------+
 ```
 
-### Screen 3: Plan Preview & Execution (Tab 3 with 4 Elevated Metric Cards)
+### Screen 3: Plan Preview & Execution (Tab 3)
 ```
 +--------------------------------------------------------------------------------------------------+
-| +--------------------+ +--------------------+ +--------------------+ +--------------------+       |
-| | 📁 FILES DISCOVERED| | 🚀 SCHEDULED MOVES| | ⚠️ DUPLICATES FOUND| | 💾 WASTED STORAGE  |       |
-| |       41           | |       41           | |        6           | |      317 B         |       |
-| +--------------------+ +--------------------+ +--------------------+ +--------------------+       |
+| Files Scanned: 41  |  Files to Move: 41  |  Duplicates: 6  |  Wasted Space: 317 B                |
 |--------------------------------------------------------------------------------------------------|
-| Filter Table: [ invoice          ] [Clear]  [Invoices] [Screenshots] [Duplicates] [Select All [✓]]|
+| Filter Preview: [ invoice                        ] [Clear]   [Select All] [Deselect All]         |
 |--------------------------------------------------------------------------------------------------|
 | [✓]| Source File Name         | Destination Path           | Category / Rule | Action  | Size    |
 |----|--------------------------|----------------------------|-----------------|---------|---------|
 | [✓]| Invoice_2026_098.pdf     | Finances\Invoices\...      | Rule: Invoices  | MOVE    | 56 B    |
 | [✓]| AWS_Billing_Sept2026.pdf | Finances\Invoices\...      | Rule: Invoices  | MOVE    | 58 B    |
-| [✓]| AWS_Billing (Copy).pdf   | Finances\Invoices\...      | Rule: Invoices  | MOVE    | 58 B ⚠️ |
+| [✓]| AWS_Billing (Copy).pdf   | Finances\Invoices\...      | Rule: Invoices  | MOVE    | 58 B [D]|
 | [✓]| Screenshot_oct14.png     | Screenshots\...            | Rule: Screensh. | MOVE    | 42 KB   |
 | [✓]| report.pdf               | Documents\2026-10\...      | Documents       | MOVE    | 120 KB  |
 |                                                                                                  |

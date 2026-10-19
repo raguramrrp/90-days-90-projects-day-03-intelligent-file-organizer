@@ -1,23 +1,24 @@
-# Context-Aware Desktop File Organization Automation Engine
+# SortIQ — Smart File Intelligence
+### Context-Aware Desktop File Organization Automation Engine
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![GUI](https://img.shields.io/badge/Frontend-Tkinter%20%7C%20ttk-green.svg)](https://docs.python.org/3/library/tkinter.html)
+[![UI](https://img.shields.io/badge/UI-SortIQ%20Design%20System-8B5CF6.svg)](https://docs.python.org/3/library/tkinter.html)
 [![Database](https://img.shields.io/badge/Database-SQLite%20(WAL)-orange.svg)](https://www.sqlite.org/)
-[![Tests](https://img.shields.io/badge/Tests-24%20Passing%20(100%25)-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-30%20Passing%20(100%25)-brightgreen.svg)]()
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011-lightgrey.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
-An intelligent, context-aware desktop file organization automation utility that scans, classifies, deduplicates, and organizes cluttered folders using deterministic rule evaluation, temporal date hierarchies, and reversible SQLite-audited operations.
+**SortIQ** is a modern desktop file organization utility that transforms disorganized download directories into clean, structured file hierarchies in a single click. It features an obsidian & electric violet design system, a priority-ordered rule engine, two-tier cryptographic duplicate detection, safety dry-run preview simulation, and enterprise-grade transaction rollback via a local SQLite audit log.
 
 ---
 
 ## 1. Project Title & Description
 
-**Professional Project Title**: Context-Aware Desktop File Organization Automation  
+**Professional Project Title**: SortIQ — Context-Aware Desktop File Organization Automation  
 **Day 3 Project** of the **90 Days – 90 Projects Challenge**  
 **Developer**: Final-Year B.Tech Artificial Intelligence & Data Science Student  
 
-Context-Aware Desktop File Organizer is an autonomous local filesystem utility that transforms disorganized download directories into clean, structured file hierarchies in a single click. It features an interactive Tkinter graphical user interface, a priority-ordered rule engine, two-tier cryptographic duplicate detection, safety dry-run preview simulation, and enterprise-grade transaction rollback via a local SQLite audit log.
+SortIQ is an autonomous local filesystem utility that scans, classifies, deduplicates, and organizes cluttered folders using deterministic rule evaluation, temporal date hierarchies, and reversible SQLite-audited operations.
 
 ---
 
@@ -72,30 +73,30 @@ Manual sorting is tedious, error-prone, and carries high risk of accidental over
 
 ## 5. UI Screenshots & Visual Guide
 
-The application features 4 dedicated workflow tabs. Detailed layout diagrams and screenshot generation scripts are documented in [screenshots/README.md](screenshots/README.md).
+The application features a modern desktop interface inspired by tools like Linear and Raycast, designed with an **Obsidian & Charcoal canvas (`#101014`)**, electric violet brand accents (`#8B5CF6`), and a vertical navigation command sidebar.
+
+![SortIQ Desktop UI Concept](screenshots/sortiq_design_concept.jpg)
 
 ```
-+--------------------------------------------------------------------------------------------------+
-| 📂 Context-Aware Desktop File Organizer                       Total Files: 41 | Batches: 1       |
-+--------------------------------------------------------------------------------------------------+
-| [ 1. Folder & Options ]  [ 2. Rule Engine ]  [ 3. Preview & Organize ]  [ 4. History & Undo ]    |
-|--------------------------------------------------------------------------------------------------|
-|  Folder Locations                                                                                |
-|  Source Folder:      [ D:\Downloads\Messy_Folder                                ] [Browse] [Downloads]|
-|  Destination Folder: [ D:\Downloads\Messy_Folder                                ] [Browse] [Same Dir] |
-|                                                                                                  |
-|  Organization Strategies & Rules                                                                 |
-|  Date Sub-folders:    [ None / Year / Year-Month / Full-Date ]   Layout:    [ Category / Date ]  |
-|  Filename Collisions: [ Auto-Rename (1) / Skip / Overwrite   ]   Duplicates:[ Report / Quarantine] |
-|  [x] Recursive Scan (traverse subfolders)     [ ] Include Hidden System Files                    |
-|                                                                                                  |
-|  [ 🔍 Scan Folder & Generate Organization Preview ]    [ 📁 Open in Explorer ]                   |
-+--------------------------------------------------------------------------------------------------+
-```
-
-To capture genuine high-resolution screenshots on an active Windows desktop session:
-```bash
-.\.venv\Scripts\python scripts\capture_screenshots.py
++----------------------------------------------------------------------------------------------------------+
+| ⬢ SortIQ  [SMART FILE INTELLIGENCE]                        ● Status: Optimal / SQLite Active             |
++----------------------------------------------------------------------------------------------------------+
+|  [SIDEBAR]            |  [DASHBOARD WORKSPACE]                                                           |
+|  NAVIGATION           |  SortIQ Workspace                                                                |
+|  ▌ 📊 Dashboard       |  Context-Aware Local File Sorting • Cryptographic SHA-256 Deduplication           |
+|    📁 Organize Files  |                                                                                  |
+|    ⚙️ Rule Engine      |  [ 📁 SCANNED: 41 ]  [ 🚀 ORGANIZED: 41 ]  [ ⚠️ DUPLICATES: 6 ]  [ 💾 RECLAIMED: 317 B ]|
+|    🚀 Plan Simulation |                                                                                  |
+|    📜 History & Undo  |  QUICK FOLDER SORTING                     |  FILE ANALYTICS                      |
+|    ⚙️ Settings         |  Source: [ D:\Downloads\Sample_Clutter ]  |  [ Donut Chart: Documents 38%        |
+|                       |  Presets: [Downloads] [Desktop] [Clutter] |                 Images 25%, Code 18% |
+|  SYSTEM METRICS       |  [ 🚀 Scan & Preview Plan ] [Configure]   |                 Media 12%, Other 7% ]|
+|  Organized: 41 files  |                                                                                  |
+|  Batches: 1           |  RECENT BATCH ACTIVITY                                                           |
+|                       |  #batch-20261019-211421  | D:\Downloads  | 41 files | COMPLETED                  |
++----------------------------------------------------------------------------------------------------------+
+| Ready.                                                                           [ Progressbar ]         |
++----------------------------------------------------------------------------------------------------------+
 ```
 
 ---

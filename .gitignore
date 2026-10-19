@@ -21,6 +21,8 @@ dist/
 
 # SQLite databases generated during runtime
 *.db
+*.db-wal
+*.db-shm
 *.sqlite
 *.sqlite3
 !data/sample_*.db
@@ -41,5 +43,6 @@ desktop.ini
 # Application logs & test outputs
 logs/
 *.log
-temp/
-test_output/
+# Local backup artifacts
+backup_*/
+*.patch
