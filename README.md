@@ -389,17 +389,6 @@ Tested areas include directory scanning, compound extension parsing, temporal cl
 
 ---
 
-## 21. Technical Skills & Resume Keywords
-
-- **Python Desktop Automation**
-- **Tkinter & `ttk` GUI Development**
-- **SQLite Database Architecture & WAL Mode**
-- **Filesystem Systems Programming (`pathlib`, `shutil`)**
-- **Rule Engines & Deterministic Pattern Matching**
-- **Cryptographic Hashing (SHA-256 Deduplication)**
-- **Automated Testing & QA (`pytest`)**
-- **PyInstaller Windows Application Packaging**
-
 ---
 
 ## 22. License & Attribution
