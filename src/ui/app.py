@@ -1281,7 +1281,7 @@ class FileOrganizerApp(tk.Tk):
         opts_row = tk.Frame(strat_card, bg=SortIQTheme.BG_CARD)
         opts_row.pack(fill="x", pady=(10, 0))
 
-        self.var_recursive = tk.BooleanVar(value=True)
+        self.var_recursive = tk.BooleanVar(value=False)
         tk.Checkbutton(
             opts_row,
             text="Recursive Scan (traverse subdirectories)",
@@ -1786,14 +1786,17 @@ class FileOrganizerApp(tk.Tk):
             messagebox.showerror("Error", "Please select a valid existing source directory.")
             return
 
-        self.set_status("Scanning directory and evaluating classification rules...")
-        self.progress_bar.config(mode="indeterminate")
-        self.progress_bar.start(10)
+        self.set_status("Initializing workspace scan...")
+        self.progress_bar.config(mode="determinate", value=0)
 
         # Switch to preview view to see simulation immediately
         self.switch_view("preview")
 
         threading.Thread(target=self._run_scan_worker, args=(src, tgt), daemon=True).start()
+
+    def _update_plan_progress(self, msg: str, pct: int) -> None:
+        self.progress_bar.config(mode="determinate", value=pct)
+        self.set_status(f"{msg} ({pct}%)")
 
     def _run_scan_worker(self, src: str, tgt: str) -> None:
         try:
@@ -1809,6 +1812,10 @@ class FileOrganizerApp(tk.Tk):
             if rules:
                 self.engine.rules = RuleEngine(rules)
 
+            def plan_progress(msg: str, current: int, total: int) -> None:
+                pct = int((current / total) * 100) if total > 0 else 0
+                self.after(0, lambda m=msg, p=pct: self._update_plan_progress(m, p))
+
             plan = self.engine.build_plan(
                 source_dir=src,
                 target_dir=tgt,
@@ -1818,6 +1825,7 @@ class FileOrganizerApp(tk.Tk):
                 duplicate_strategy=dup_strategy,
                 recursive=recursive,
                 include_hidden=include_hidden,
+                progress_callback=plan_progress,
             )
             self.after(0, lambda p=plan: self._on_scan_complete(p))
         except Exception as e:
@@ -1853,8 +1861,13 @@ class FileOrganizerApp(tk.Tk):
             self.tree_preview.delete(item)
 
         filter_text = self._filter_var.get().lower().strip()
+        MAX_DISPLAY_ROWS = 1000
+        displayed = 0
 
         for idx, action in enumerate(plan.actions):
+            if displayed >= MAX_DISPLAY_ROWS:
+                break
+
             src_name = action.source_name
             tgt_rel = str(action.relative_dest)
             cat_name = action.matched_rule or action.category
@@ -1895,6 +1908,10 @@ class FileOrganizerApp(tk.Tk):
                 ),
                 tags=tags,
             )
+            displayed += 1
+
+        if len(plan.actions) > MAX_DISPLAY_ROWS and not filter_text:
+            self.set_status(f"Previewing top {MAX_DISPLAY_ROWS} of {len(plan.actions)} files (all {len(plan.actions)} files will be organized upon execution).")
 
     def _apply_preview_filter(self) -> None:
         if self.current_plan:
@@ -1946,15 +1963,23 @@ class FileOrganizerApp(tk.Tk):
             return
 
         self.btn_execute.set_enabled(False)
-        self.set_status(f"Executing organization of {included_count} files...")
-        self.progress_bar.config(mode="indeterminate")
-        self.progress_bar.start(10)
+        self.set_status(f"Starting organization of {included_count} files...")
+        self.progress_bar.config(mode="determinate", value=0)
 
         threading.Thread(target=self._run_execute_worker, daemon=True).start()
 
+    def _update_exec_progress(self, current: int, total: int, current_file: str, pct: int) -> None:
+        self.progress_bar.config(mode="determinate", value=pct)
+        display_name = (current_file[:24] + "...") if len(current_file) > 27 else current_file
+        self.set_status(f"Relocating file ({current}/{total}): {display_name} [{pct}%]")
+
     def _run_execute_worker(self) -> None:
         try:
-            res = self.engine.execute_plan(self.current_plan)
+            def exec_progress(current: int, total: int, current_file: str) -> None:
+                pct = int((current / total) * 100) if total > 0 else 0
+                self.after(0, lambda c=current, t=total, f=current_file, p=pct: self._update_exec_progress(c, t, f, p))
+
+            res = self.engine.execute_plan(self.current_plan, progress_callback=exec_progress)
             self.after(0, lambda r=res: self._on_execute_complete(r))
         except Exception as e:
             err_str = str(e)
@@ -1962,7 +1987,7 @@ class FileOrganizerApp(tk.Tk):
 
     def _on_execute_complete(self, result: ExecutionResult) -> None:
         self.progress_bar.stop()
-        self.progress_bar.config(mode="determinate", value=0)
+        self.progress_bar.config(mode="determinate", value=100)
 
         self.refresh_history_list()
         self._update_telemetry_metrics()
@@ -2011,14 +2036,22 @@ class FileOrganizerApp(tk.Tk):
             return
 
         self.set_status(f"Rolling back Batch {batch_id}...")
-        self.progress_bar.config(mode="indeterminate")
-        self.progress_bar.start(10)
+        self.progress_bar.config(mode="determinate", value=0)
 
         threading.Thread(target=self._run_rollback_worker, args=(batch_id,), daemon=True).start()
 
+    def _update_rollback_progress(self, current: int, total: int, current_file: str, pct: int) -> None:
+        self.progress_bar.config(mode="determinate", value=pct)
+        display_name = (current_file[:24] + "...") if len(current_file) > 27 else current_file
+        self.set_status(f"Restoring file ({current}/{total}): {display_name} [{pct}%]")
+
     def _run_rollback_worker(self, batch_id: str) -> None:
         try:
-            res = self.engine.rollback_batch(batch_id)
+            def rollback_progress(current: int, total: int, current_file: str) -> None:
+                pct = int((current / total) * 100) if total > 0 else 0
+                self.after(0, lambda c=current, t=total, f=current_file, p=pct: self._update_rollback_progress(c, t, f, p))
+
+            res = self.engine.rollback_batch(batch_id, progress_callback=rollback_progress)
             self.after(0, lambda b=batch_id, r=res: self._on_rollback_complete(b, r))
         except Exception as e:
             err_str = str(e)

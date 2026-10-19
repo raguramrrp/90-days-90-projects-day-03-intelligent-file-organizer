@@ -170,12 +170,18 @@ class OrganizerEngine:
         if not source_path.exists() or not source_path.is_dir():
             raise ValueError(f"Source folder does not exist: {source_path}")
 
-        # Safety: avoid re-scanning organized subfolders if target is inside source
-        excluded_dirs: Set[str] = set()
-        if source_path == target_path:
-            excluded_dirs = {
-                cat.lower() for cat in self.classifier.DEFAULT_EXT_MAP.keys()
-            } | {"_duplicates", "screenshots", "finances", "career", "large_files", "software_installers"}
+        # Safety: avoid re-scanning organized subfolders whether target is inside source or not
+        excluded_dirs: Set[str] = {
+            cat.lower() for cat in self.classifier.DEFAULT_EXT_MAP.keys()
+        } | {"_duplicates", "screenshots", "finances", "career", "large_files", "software_installers"}
+
+        # If target directory is inside or equal to source directory, exclude it so output files aren't scanned
+        try:
+            rel_to_source = target_path.relative_to(source_path)
+            if len(rel_to_source.parts) > 0:
+                excluded_dirs.add(rel_to_source.parts[0].lower())
+        except ValueError:
+            pass
 
         scanner = FileScanner(
             include_hidden=include_hidden,
@@ -183,23 +189,36 @@ class OrganizerEngine:
         )
 
         if progress_callback:
-            progress_callback("Scanning files...", 0, 100)
+            progress_callback("Scanning directory for eligible files...", 5, 100)
 
-        files = scanner.scan_directory(source_path, recursive=recursive)
+        def scan_prog(count: int, fname: str) -> None:
+            if progress_callback:
+                progress_callback(f"Scanning directory: {count} files discovered...", 15, 100)
 
-        if progress_callback:
-            progress_callback(f"Scanned {len(files)} files. Detecting duplicates...", 30, 100)
-
-        # Run duplicate detection
-        dup_report = self.detector.detect_duplicates(files)
+        files = scanner.scan_directory(source_path, recursive=recursive, progress_callback=scan_prog)
 
         if progress_callback:
-            progress_callback("Evaluating categorization rules...", 70, 100)
+            progress_callback(f"Scanned {len(files)} files. Analyzing duplicate candidates...", 35, 100)
+
+        def dup_prog(cur: int, tot: int) -> None:
+            if progress_callback:
+                pct = 35 + int((cur / tot) * 35) if tot > 0 else 70
+                progress_callback(f"Analyzing duplicate signatures ({cur}/{tot})...", pct, 100)
+
+        # Run duplicate detection with progress callback
+        dup_report = self.detector.detect_duplicates(files, progress_callback=dup_prog)
+
+        if progress_callback:
+            progress_callback(f"Evaluating classification rules for {len(files)} files...", 72, 100)
 
         actions: List[PlannedAction] = []
         claimed_destinations: Set[Path] = set()
+        total_files = len(files)
 
-        for file_info in files:
+        for idx, file_info in enumerate(files, start=1):
+            if progress_callback and (idx % 100 == 0 or idx == total_files):
+                pct = 72 + int((idx / total_files) * 26) if total_files > 0 else 98
+                progress_callback(f"Compiling organization plan ({idx}/{total_files})...", pct, 100)
             is_duplicate = file_info.path in dup_report.duplicate_paths
             duplicate_group = dup_report.duplicate_paths.get(file_info.path)
             primary_path = duplicate_group.primary_file.path if duplicate_group else None

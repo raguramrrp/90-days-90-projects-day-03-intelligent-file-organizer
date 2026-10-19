@@ -8,7 +8,7 @@ import logging
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Set, List
+from typing import Optional, Set, List, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +66,36 @@ class FileScanner:
         "file_organizer.db-shm",
     }
 
+    COMMON_EXCLUDED_DIRS: Set[str] = {
+        "node_modules",
+        ".git",
+        ".svn",
+        ".hg",
+        ".venv",
+        "venv",
+        "env",
+        ".env",
+        "__pycache__",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".tox",
+        "dist",
+        "build",
+        "target",
+        ".next",
+        ".nuxt",
+        ".turbo",
+        ".gradle",
+        ".idea",
+        ".vscode",
+        "appdata",
+        "$recycle.bin",
+        "system volume information",
+        ".cache",
+        ".npm",
+        ".yarn",
+    }
+
     COMPOUND_EXTENSIONS: Set[str] = {
         ".tar.gz",
         ".tar.bz2",
@@ -81,7 +111,7 @@ class FileScanner:
     ) -> None:
         self.include_hidden = include_hidden
         self.exclude_names = set(exclude_names or set()) | {f.lower() for f in self.COMMON_SYSTEM_FILES}
-        self.exclude_dirs = set(exclude_dirs or set())
+        self.exclude_dirs = {d.lower() for d in self.COMMON_EXCLUDED_DIRS} | {d.lower() for d in (exclude_dirs or set())}
 
     @staticmethod
     def get_default_downloads_folder() -> Path:
@@ -157,12 +187,14 @@ class FileScanner:
         self,
         directory: Path | str,
         recursive: bool = False,
+        progress_callback: Optional[Callable[[int, str], None]] = None,
     ) -> List[FileInfo]:
         """Scan a target directory and return metadata for all eligible files.
         
         Args:
             directory: Path or string path of directory to scan.
             recursive: If True, recursively traverse subdirectories.
+            progress_callback: Optional callback receiving (scanned_count, current_filename).
             
         Returns:
             List of FileInfo objects sorted by name.
@@ -187,15 +219,22 @@ class FileScanner:
                         info = self.scan_file(fpath)
                         if info is not None:
                             scanned_files.append(info)
+                            if progress_callback and len(scanned_files) % 50 == 0:
+                                progress_callback(len(scanned_files), info.name)
             else:
                 for entry in os.scandir(root):
                     if entry.is_file(follow_symlinks=False):
                         info = self.scan_file(Path(entry.path))
                         if info is not None:
                             scanned_files.append(info)
+                            if progress_callback and len(scanned_files) % 50 == 0:
+                                progress_callback(len(scanned_files), info.name)
         except PermissionError as exc:
             logger.error("Permission denied when accessing directory %s: %s", root, exc)
             raise
+
+        if progress_callback:
+            progress_callback(len(scanned_files), "Scan completed")
 
         scanned_files.sort(key=lambda f: f.name.lower())
         return scanned_files

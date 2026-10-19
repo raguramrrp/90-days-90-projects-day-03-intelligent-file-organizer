@@ -70,8 +70,8 @@ class DuplicateReport:
 class DuplicateDetector:
     """High-throughput duplicate detector using streaming SHA-256 with size pre-filtering."""
 
-    def __init__(self, chunk_size: int = 65536) -> None:
-        self.chunk_size = chunk_size
+    def __init__(self, chunk_size: int = 1048576) -> None:
+        self.chunk_size = chunk_size  # 1MB buffer for high-throughput disk reads
 
     def compute_file_hash(self, file_path: Path, algorithm: str = "sha256") -> Optional[str]:
         """Compute cryptographic hash of a file using buffered streaming reads."""
