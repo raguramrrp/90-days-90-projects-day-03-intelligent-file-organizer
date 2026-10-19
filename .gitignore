@@ -1,0 +1,45 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# PyInstaller / Build Artifacts
+build/
+dist/
+*.spec
+!app.spec
+
+# SQLite databases generated during runtime
+*.db
+*.sqlite
+*.sqlite3
+!data/sample_*.db
+
+# Operating System & IDE
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.local
+
+# Application logs & test outputs
+logs/
+*.log
+temp/
+test_output/

@@ -1,0 +1,1 @@
+console.log('App initialized on client'); window.onload = () => {};

@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "context-aware-file-organizer"
+version = "1.0.0"
+description = "Context-Aware Desktop File Organization Automation Engine with Rule Evaluation, Duplicate Detection, Simulation Preview, and SQLite Rollback Audit."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Raguram R R P", email = "developer@example.com" }
+]
+keywords = [
+    "automation",
+    "file-organizer",
+    "python-automation",
+    "desktop-utility",
+    "duplicate-detector",
+    "rule-engine",
+    "tkinter-gui",
+    "sqlite-audit"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Topic :: System :: Filesystems",
+    "Topic :: Utilities"
+]
+
+[project.scripts]
+file-organizer = "src.main:main"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q --tb=short"
+testpaths = [
+    "tests"
+]
+pythonpath = [
+    "."
+]

@@ -1,0 +1,15 @@
+# Core application relies on Python standard libraries:
+# - tkinter (GUI)
+# - sqlite3 (audit logging, operations, rules)
+# - hashlib (duplicate detection via streaming SHA-256)
+# - shutil / pathlib (atomic filesystem operations)
+
+# Testing and Quality Assurance
+pytest>=8.0.0
+pytest-cov>=4.1.0
+
+# Screenshot & Visual Documentation
+pillow>=10.0.0
+
+# Packaging & Deployment
+pyinstaller>=6.4.0
