@@ -27,53 +27,58 @@ This will launch the application, load the synthetic test dataset, cycle through
 ### Screen 1: Folder Selection & Strategy Configuration (Tab 1)
 ```
 +--------------------------------------------------------------------------------------------------+
-| 📂 Context-Aware Desktop File Organizer                       Total Files: 41 | Batches: 1       |
+| 📂 Context-Aware Desktop File Organizer  [⚡ AUTOMATION ENGINE]  [📊 Total: 41 | Batches: 1] [🌙/☀️] |
 +--------------------------------------------------------------------------------------------------+
-| [ 1. Folder & Options ]  [ 2. Rule Engine ]  [ 3. Preview & Organize ]  [ 4. History & Undo ]    |
+| [ 📁 1. Folder & Options ] [ ⚙️ 2. Rule Engine ] [ 👁️ 3. Preview & Organize ] [ 📜 4. History & Undo ]|
 |--------------------------------------------------------------------------------------------------|
-|  Folder Locations                                                                                |
-|  Source Folder:      [ D:\Downloads\Messy_Folder                                ] [Browse] [Downloads]|
-|  Destination Folder: [ D:\Downloads\Messy_Folder                                ] [Browse] [Same Dir] |
+| Quick Presets: [ 📥 Downloads Folder ]  [ 🖥️ Desktop Folder ]  [ 🧪 Sample Clutter Test ]          |
 |                                                                                                  |
-|  Organization Strategies & Rules                                                                 |
-|  Date Sub-folders:    [ None / Year / Year-Month / Full-Date ]   Layout:    [ Category / Date ]  |
-|  Filename Collisions: [ Auto-Rename (1) / Skip / Overwrite   ]   Duplicates:[ Report / Quarantine] |
-|  [x] Recursive Scan (traverse subfolders)     [ ] Include Hidden System Files                    |
+| 📁 Folder Locations                                                                              |
+| Source Folder:      [ D:\Downloads\Messy_Folder                                ] [Browse]        |
+| Destination Folder: [ D:\Downloads\Messy_Folder                                ] [Browse] [Same] |
 |                                                                                                  |
-|  [ 🔍 Scan Folder & Generate Organization Preview ]    [ 📁 Open in Explorer ]                   |
+| ⚙️ Organization Strategies & Conflict Rules                                                      |
+| Date Sub-folders:    [ None / Year / Year-Month / Full-Date ]   Layout:    [ Category / Date ]  |
+| Filename Collisions: [ Auto-Rename (1) / Skip / Overwrite   ]   Duplicates:[ Report / Quarantine] |
+| [x] Recursive Scan (traverse subfolders)     [ ] Include Hidden Files                            |
+|                                                                                                  |
+| [ ⚡ Scan Folder & Generate Organization Preview ]    [ 📂 Open Source in Explorer ]             |
 +--------------------------------------------------------------------------------------------------+
 ```
 
 ### Screen 2: Custom Rule Engine (Tab 2)
 ```
 +--------------------------------------------------------------------------------------------------+
-| Active Categorization Rules (Evaluated in Ascending Priority Order):                              |
+| Priority Categorization Rules (Evaluated in Ascending Order):                                    |
 |--------------------------------------------------------------------------------------------------|
 | Priority | Rule Name                  | Target Subfolder       | Pattern       | Status          |
 |----------|----------------------------|------------------------|---------------|-----------------|
-|    10    | Screenshots                | Screenshots            | *screenshot*  | Active ✓        |
-|    20    | Invoices & Financial Rec.  | Finances/Invoices      | *invoice*     | Active ✓        |
-|    25    | Receipts                   | Finances/Receipts      | *receipt*     | Active ✓        |
-|    30    | Resumes & CVs              | Career/Resumes         | *resume*      | Active ✓        |
-|    40    | Large Media Files (>100MB) | Large_Files            | > 100 MB      | Active ✓        |
-|    50    | Software Installers & ISOs | Software_Installers    | .exe,.msi,.iso| Active ✓        |
+|   P-10   | Screenshots                | Screenshots            | *screenshot*  | Active ✓        |
+|   P-20   | Invoices & Financial Rec.  | Finances/Invoices      | *invoice*     | Active ✓        |
+|   P-25   | Receipts                   | Finances/Receipts      | *receipt*     | Active ✓        |
+|   P-30   | Resumes & CVs              | Career/Resumes         | *resume*      | Active ✓        |
+|   P-40   | Large Media Files (>100MB) | Large_Files            | > 100 MB      | Active ✓        |
+|   P-50   | Software Installers & ISOs | Software_Installers    | .exe,.msi,.iso| Active ✓        |
 |                                                                                                  |
-|  [ ➕ Add Rule ]   [ ✏️ Edit Selected ]   [ 🗑️ Delete ]   [ 🔄 Toggle Status ]   [ ↺ Reset ]      |
+|  [ ➕ Add Rule ]   [ ✏️ Edit Selected ]   [ 🗑️ Delete Selected ]   [ 🔄 Toggle ]   [ ↺ Reset ]   |
 +--------------------------------------------------------------------------------------------------+
 ```
 
-### Screen 3: Plan Preview & Execution (Tab 3)
+### Screen 3: Plan Preview & Execution (Tab 3 with 4 Elevated Metric Cards)
 ```
 +--------------------------------------------------------------------------------------------------+
-| Files Scanned: 41  |  Files to Move: 41  |  Duplicates: 6  |  Wasted Space: 317 B                |
+| +--------------------+ +--------------------+ +--------------------+ +--------------------+       |
+| | 📁 FILES DISCOVERED| | 🚀 SCHEDULED MOVES| | ⚠️ DUPLICATES FOUND| | 💾 WASTED STORAGE  |       |
+| |       41           | |       41           | |        6           | |      317 B         |       |
+| +--------------------+ +--------------------+ +--------------------+ +--------------------+       |
 |--------------------------------------------------------------------------------------------------|
-| Filter Preview: [ invoice                        ] [Clear]   [Select All] [Deselect All]         |
+| Filter Table: [ invoice          ] [Clear]  [Invoices] [Screenshots] [Duplicates] [Select All [✓]]|
 |--------------------------------------------------------------------------------------------------|
 | [✓]| Source File Name         | Destination Path           | Category / Rule | Action  | Size    |
 |----|--------------------------|----------------------------|-----------------|---------|---------|
 | [✓]| Invoice_2026_098.pdf     | Finances\Invoices\...      | Rule: Invoices  | MOVE    | 56 B    |
 | [✓]| AWS_Billing_Sept2026.pdf | Finances\Invoices\...      | Rule: Invoices  | MOVE    | 58 B    |
-| [✓]| AWS_Billing (Copy).pdf   | Finances\Invoices\...      | Rule: Invoices  | MOVE    | 58 B [D]|
+| [✓]| AWS_Billing (Copy).pdf   | Finances\Invoices\...      | Rule: Invoices  | MOVE    | 58 B ⚠️ |
 | [✓]| Screenshot_oct14.png     | Screenshots\...            | Rule: Screensh. | MOVE    | 42 KB   |
 | [✓]| report.pdf               | Documents\2026-10\...      | Documents       | MOVE    | 120 KB  |
 |                                                                                                  |
