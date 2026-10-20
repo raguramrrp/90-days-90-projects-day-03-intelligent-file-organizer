@@ -392,7 +392,7 @@ Tested areas include directory scanning, compound extension parsing, temporal cl
 
 ---
 
-## 22. License & Attribution
+## 21. License & Attribution
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.  
 Developed as part of the **90 Days – 90 Projects Challenge** by **Raguram R R P**.
